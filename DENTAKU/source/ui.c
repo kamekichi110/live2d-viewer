@@ -3,14 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ui.h"
-
 static const char *buttons = "0123456789+-*/()=sin cos tan log ln sqrt ^ , .";
 static const int buttonCount = 26;
 static const int buttonWidth = 30;
 static const int buttonHeight = 20;
 
 void drawBackgroundImage() {
-    FILE* bgFile = fopen("gfx/background.bin", "rb");
+    FILE* bgFile = fopen("gfx/bg.bin", "rb");
     if (bgFile) {
         u8* bgData = (u8*)malloc(400 * 240 * 3); // 400x240 RGB
         fread(bgData, 1, 400 * 240 * 3, bgFile);

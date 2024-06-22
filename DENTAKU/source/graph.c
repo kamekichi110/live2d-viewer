@@ -1,4 +1,4 @@
-#include <3ds.h>
+#include "./ctrulib/libctru/include/3ds.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

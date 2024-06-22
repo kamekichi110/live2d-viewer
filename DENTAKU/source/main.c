@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <3ds.h>
+#include "./ctrulib/libctru/include/3ds.h"
 #include "ui.h"
 #include "graph.h"
 #include "calculator.h"

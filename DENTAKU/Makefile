@@ -1,4 +1,4 @@
-# 3DS homebrew Makefile for DENTAKU
+# DENTAKU Makefile
 
 TARGET := DENTAKU
 SOURCES := source/main.c source/calculator.c source/graph.c source/ui.c
@@ -20,7 +20,7 @@ TADA_WAV := $(ASSETS_DIR)/tada.wav
 OUTPUT := $(TARGET).3dsx
 CIA_OUTPUT := $(TARGET).cia
 
-# Tools
+# Tools (assuming they are in PATH, adjust if necessary)
 MAKEROM := makerom
 3DSX_TOOL := 3dsxtool
 SMDHTOOL := smdhtool
@@ -29,15 +29,18 @@ WAV_TO_BCSTM := wavtobcstm
 # Flags
 CFLAGS := -Wall
 
+# Environment variables
+export DEVKITPRO := /opt/devkitpro
+export PATH := $(DEVKITPRO)/tools/bin:$(PATH)
+
 all: check_libs $(OUTPUT) $(CIA_OUTPUT)
 
-# Check if libraries are installed and build if not
 check_libs:
 	@echo "Checking if libraries are installed..."
-	@dpkg -s devkitARM >/dev/null 2>&1 || (echo "devkitARM is not installed, installing..."; sudo apt-get install devkitARM)
-	@dpkg -s ctrulib >/dev/null 2>&1 || (echo "ctrulib is not installed, installing..."; sudo apt-get install ctrulib)
-	@dpkg -s citro3d >/dev/null 2>&1 || (echo "citro3d is not installed, installing..."; sudo apt-get install citro3d)
-	@echo "All required libraries are installed."
+	@$(DEVKITPRO)/tools/bin/pkg-config --exists devkitARM ctrulib citro3d || \
+	    (echo "Required libraries are not installed, installing..."; \
+	    sudo $(DEVKITPRO)/update.sh && \
+	    sudo $(DEVKITPRO)/pacman -S --noconfirm devkitARM ctrulib citro3d)
 
 $(OUTPUT): $(TARGET).elf $(ICON) $(BACKGROUND)
 	@echo "Generating $@..."

@@ -4,14 +4,13 @@
 #include <string.h>
 #include "ui.h"
 
-// グローバル変数
 static const char *buttons = "0123456789+-*/()=sin cos tan log ln sqrt ^ , .";
 static const int buttonCount = 26;
 static const int buttonWidth = 30;
 static const int buttonHeight = 20;
 
 void drawBackgroundImage() {
-    FILE* bgFile = fopen("gfx/bg.bin", "rb");
+    FILE* bgFile = fopen("gfx/background.bin", "rb");
     if (bgFile) {
         u8* bgData = (u8*)malloc(400 * 240 * 3); // 400x240 RGB
         fread(bgData, 1, 400 * 240 * 3, bgFile);
@@ -43,7 +42,6 @@ void drawButton(int x, int y, const char *text, bool selected) {
         }
     }
 
-    // 文字の描画
     printf("\x1b[%d;%dH%s", y / 8 + 1, x / 8 + 1, text);
 }
 
@@ -63,12 +61,27 @@ void handleInput(char *expression, int *cursorPos) {
     u32 kDown = hidKeysDown();
 
     if (kDown & KEY_A) {
-        // 式を計算する
+        // Calculate the expression
         printf("Calculating: %s\n", expression);
     } else if (kDown & KEY_B) {
-        // 式をクリアする
+        // Clear the expression
         *cursorPos = 0;
         expression[0] = '\0';
     } else if (kDown & KEY_Y) {
-        // 1文字削除
-        if (*cursorPos > 
+        // Delete one character
+        if (*cursorPos > 0) {
+            (*cursorPos)--;
+            expression[*cursorPos] = '\0';
+        }
+    } else if (kDown & KEY_X) {
+        // Append a character
+        for (int i = 0; i < buttonCount; i++) {
+            if (kDown & (1 << (KEY_A + i))) {
+                expression[*cursorPos] = buttons[i];
+                (*cursorPos)++;
+                expression[*cursorPos] = '\0';
+                break;
+            }
+        }
+    }
+}
